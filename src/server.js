@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 import cookieParser from "cookie-parser";
+import router from "./routes/auth.js";
 
 const app = express();
 
@@ -8,10 +10,13 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
-
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+app.use("/api/auth", router);
 
 const PORT = process.env.PORT || 5000;
 
