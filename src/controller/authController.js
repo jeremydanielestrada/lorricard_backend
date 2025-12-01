@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { cookieOptions } from "../utils/cookie.js";
 import { userModel } from "../models/user.js";
+import pool from "../config/db.js";
 
 const { findUserByEmail, createUser } = userModel();
 
@@ -46,4 +47,54 @@ export const register = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
+};
+
+//login
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: '"Please provide all required fields"' });
+    }
+
+    const user = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
+
+    if (user.rows.length === 0) {
+      return res.status(400).json({ message: "Invalid Credentials" });
+    }
+
+    const userData = user.rows[0];
+
+    const isMatch = await bcrypt.compare(password, userData.password); // compare password
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Inavalid Password" });
+    }
+
+    const token = generateToken(userData.id);
+
+    res.cookie("token", token, cookieOptions);
+
+    res.json({
+      user: {
+        id: userData.id,
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        email: userData.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+//logout
+export const logout = (req, res) => {
+  res.cookie("token", "", { ...cookieOptions, maxAge: 1 });
+  res.json({ message: "Logged out succesfully" });
 };
