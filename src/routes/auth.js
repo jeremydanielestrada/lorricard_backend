@@ -11,7 +11,7 @@ router.post("/register", register);
 router.post("/login", login);
 
 //Logout
-router.post("logout/", logout);
+router.post("/logout", logout);
 
 //
 router.get("/me", protect, async (req, res) => {

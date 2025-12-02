@@ -27,3 +27,22 @@ export const protect = async (req, res, next) => {
     res.status(400).json({ message: "Not authorized, token failed" });
   }
 };
+
+export const isAdmin = async (req, res, next) => {
+  try {
+    const user = await pool.query("SELECT role FROM users WHERE id = $1", [
+      req.user.id,
+    ]);
+
+    if (user.rows.length === 0 || user.rows[0].role !== "admin") {
+      return res
+        .status(403)
+        .json({ message: "Access denied. Admin role required" });
+    }
+
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(400).json({ message: "Error checking admin privileges" });
+  }
+};

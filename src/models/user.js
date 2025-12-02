@@ -8,10 +8,10 @@ export const userModel = () => {
     return result.rows[0];
   };
 
-  const createUser = async (firstName, lastName, email, password) => {
+  const createUser = async (firstName, lastName, email, password, role) => {
     const result = await pool.query(
-      "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email",
-      [firstName, lastName, email, password]
+      "INSERT INTO users (first_name, last_name, email, password, role) VALUES ($1, $2, $3, $4, $5 ) RETURNING id, first_name, last_name, email, role",
+      [firstName, lastName, email, password, role]
     );
     return result.rows[0];
   };

@@ -15,9 +15,9 @@ const generateToken = (id) => {
 //register
 export const register = async (req, res) => {
   try {
-    const { first_name, last_name, email, password } = req.body;
+    const { first_name, last_name, email, password, role } = req.body;
 
-    if (!first_name || !last_name || !email || !password) {
+    if (!first_name || !last_name || !email || !password || !role) {
       return res
         .status(400)
         .json({ message: "Please provide all required fields" });
@@ -35,7 +35,8 @@ export const register = async (req, res) => {
       first_name,
       last_name,
       email,
-      hashedPassword
+      hashedPassword,
+      role
     );
 
     const token = generateToken(newUser.id);
@@ -86,6 +87,7 @@ export const login = async (req, res) => {
         first_name: userData.first_name,
         last_name: userData.last_name,
         email: userData.email,
+        role: userData.role,
       },
     });
   } catch (error) {
@@ -95,6 +97,6 @@ export const login = async (req, res) => {
 
 //logout
 export const logout = (req, res) => {
-  res.cookie("token", "", { ...cookieOptions, maxAge: 1 });
+  res.cookie("token", " ", { ...cookieOptions, maxAge: 1 });
   res.json({ message: "Logged out succesfully" });
 };
