@@ -39,7 +39,22 @@ export const createFolder = async (req, res) => {
     res.status(201).json(result.rows[0]);
     return result.rows[0];
   } catch (error) {
-    console.error(error);
+    return res.status(400).json({ message: "Unable to create folder", error });
+  }
+};
+
+export const updateFolder = async (req, res) => {
+  try {
+    const { title } = req.body;
+
+    const result = await pool.query(
+      "UPDATE folders SET title = $1 WHERE id = $2",
+      [title, req.params.folderId]
+    );
+
+    res.status(201).json({ message: "Folder updated succesfully" });
+    return result.rows[0];
+  } catch (error) {
     return res.status(400).json({ message: "Unable to create folder", error });
   }
 };
