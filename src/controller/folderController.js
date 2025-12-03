@@ -48,13 +48,35 @@ export const updateFolder = async (req, res) => {
     const { title } = req.body;
 
     const result = await pool.query(
-      "UPDATE folders SET title = $1 WHERE id = $2",
+      "UPDATE folders SET title = $1 WHERE id = $2 RETURNING title",
       [title, req.params.folderId]
     );
 
-    res.status(201).json({ message: "Folder updated succesfully" });
-    return result.rows[0];
+    res.status(200).json({
+      message: "Folder updated successfully",
+      title: result.rows[0].title,
+    });
   } catch (error) {
-    return res.status(400).json({ message: "Unable to create folder", error });
+    return res.status(400).json({ message: "Unable to udpate folder", error });
+  }
+};
+
+export const deleteFolder = async (req, res) => {
+  try {
+    const result = await pool.query(
+      "DELETE FROM folders WHERE id = $1 RETURNING id, title",
+      [req.params.folderId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Folder not found" });
+    }
+
+    res.status(200).json({
+      message: "Folder deleted successfully",
+      folder: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({ message: "Unable to delete folder", error });
   }
 };
