@@ -5,12 +5,12 @@ import parseDocumentWithGroq from "../utils/groq.js";
 export const getAllFlashCardsByFolderId = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, question, answer FROM flash_cards WHERE folder_id = $1",
+      "SELECT id, question, answer FROM flash_cards WHERE folder_id = $1 ORDER BY created_at DESC",
       [req.params.folderId]
     );
 
-    if (result.rows[0].length == 0) {
-      return res.status(400).json({ message: "Empty folder" });
+    if (result.rows.length === 0) {
+      return res.status(400).json({ message: "No flashcards found" });
     }
     res.status(200).json({ flash_cards: result.rows });
   } catch (error) {
