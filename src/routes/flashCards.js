@@ -2,8 +2,8 @@ import express from "express";
 import {
   getAllFlashCardsByFolderId,
   createFlashCardsFromDocument,
-} from "../controller/flashCardsController";
-import { protect } from "../middleware/authMiddleware";
+} from "../controller/flashCardsController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const flashCardRouter = express.Router();
 

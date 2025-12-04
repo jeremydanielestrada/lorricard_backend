@@ -4,6 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routes/auth.js";
 import { folderRouter } from "./routes/folder.js";
+import flashCardRouter from "./routes/flashCards.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(
 );
 app.use("/api/auth", router);
 app.use("/api/folder", folderRouter);
+app.use("/api/flash-card", flashCardRouter);
 
 const PORT = process.env.PORT;
 

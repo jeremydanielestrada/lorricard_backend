@@ -19,7 +19,8 @@ async function parseDocumentWithGroq(document) {
     temperature: 0.7,
     response_format: { type: "json_object" },
   });
-  return JSON.parse(completion.choices[0].message.content);
+  const parsed = JSON.parse(completion.choices[0].message.content);
+  return parsed.flashcards || []; // Extract the array
 }
 
 export default parseDocumentWithGroq;

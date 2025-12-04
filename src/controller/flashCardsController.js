@@ -27,8 +27,8 @@ export const createFlashCardsFromDocument = async (req, res) => {
     const parsedFlashcards = await parseDocumentWithGroq(document);
 
     const insertPromises = parsedFlashcards.map(({ question, answer }) => {
-      pool.query(
-        "INSERT INTO flash_cards (question, answer, folder_id ) VALUES ($1, $2, $3) RETURNING",
+      return pool.query(
+        "INSERT INTO flash_cards (question, answer, folder_id ) VALUES ($1, $2, $3) RETURNING id, question, answer,folder_id",
         [question, answer, req.params.folderId]
       );
     });
@@ -41,6 +41,8 @@ export const createFlashCardsFromDocument = async (req, res) => {
       flash_cards: flashcards,
     });
   } catch (error) {
-    res.status(400).json({ message: "Erro creating Flash Cards", error });
+    res
+      .status(400)
+      .json({ message: "Error creating Flash Cards", error: error.message });
   }
 };
