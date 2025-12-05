@@ -5,7 +5,7 @@ import parseDocumentWithGroq from "../utils/groq.js";
 export const getAllFlashCardsByFolderId = async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id, question, answer FROM flash_cards WHERE folder_id = $1 ORDER BY created_at DESC",
+      "SELECT id, question, answer, folder_id FROM flash_cards WHERE folder_id = $1 ORDER BY created_at DESC",
       [req.params.folderId]
     );
 
@@ -28,7 +28,7 @@ export const createFlashCardsFromDocument = async (req, res) => {
 
     const insertPromises = parsedFlashcards.map(({ question, answer }) => {
       return pool.query(
-        "INSERT INTO flash_cards (question, answer, folder_id ) VALUES ($1, $2, $3) RETURNING id, question, answer,folder_id",
+        "INSERT INTO flash_cards (question, answer, folder_id ) VALUES ($1, $2, $3) RETURNING id, question, answer, folder_id",
         [question, answer, req.params.folderId]
       );
     });
