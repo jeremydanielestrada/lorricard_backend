@@ -1,6 +1,6 @@
 export const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
-  sameSite: "Strict",
+  sameSite: "lax",
   maxAge: 30 * 24 * 60 * 60 * 1000, //  cookies expires on 30days
 };

@@ -28,25 +28,38 @@ export const continueToGoogleAuth = async (req, res) => {
     const { email, given_name, family_name, sub } = payload;
 
     //check if user exist in DB
+    console.log("Checking if user exists...");
     const existingUser = await pool.query(
-      "SELECT * FROM users WHERE google_id = $1",
+      "SELECT id, first_name, last_name, email, google_id FROM users WHERE google_id = $1",
       [sub]
+    );
+
+    console.log(
+      "Query result:",
+      existingUser.rows.length > 0 ? "User found" : "User not found"
     );
 
     let user;
 
     if (existingUser.rows.length === 0) {
+      console.log("Creating new user...");
       const result = await pool.query(
-        "INSERT INTO users (first_name, last_name, email, google_id) VALUES ($1, $2, $3, $4) RETURNING first_name, last_name, email, google_id",
+        "INSERT INTO users (first_name, last_name, email, google_id) VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, google_id",
         [given_name, family_name, email, sub]
       );
       user = result.rows[0];
+      console.log("New user created:", user);
     } else {
       user = existingUser.rows[0];
+      console.log("Existing user:", user);
     }
 
-    const token = generateToken(user.google_id, user.email);
+    console.log("User object:", user); // ADD THIS - Check what's in user
+    console.log("Generating token with ID:", user.id); // ADD THIS
 
+    const token = generateToken(user.id, user.email); // MUST use user.id, NOT user.google_id
+
+    console.log("Setting cookie and sending response...");
     res.cookie("token", token, cookieOptions);
     res.json({ jwt: token, user });
   } catch (error) {
