@@ -25,7 +25,6 @@ export const continueToGoogleAuth = async (req, res) => {
     });
 
     const payload = ticket.getPayload();
-
     const { email, given_name, family_name, sub } = payload;
 
     //check if user exist in DB
@@ -38,7 +37,7 @@ export const continueToGoogleAuth = async (req, res) => {
 
     if (existingUser.rows.length === 0) {
       const result = await pool.query(
-        "INSERT INTO  users (first_name, last_name, email, google_id) VALUES ($1, $2, $3, $4) RETURNING first_name, last_name, email, google_id",
+        "INSERT INTO users (first_name, last_name, email, google_id) VALUES ($1, $2, $3, $4) RETURNING first_name, last_name, email, google_id",
         [given_name, family_name, email, sub]
       );
       user = result.rows[0];
@@ -47,6 +46,7 @@ export const continueToGoogleAuth = async (req, res) => {
     }
 
     const token = generateToken(user.google_id, user.email);
+
     res.cookie("token", token, cookieOptions);
     res.json({ jwt: token, user });
   } catch (error) {

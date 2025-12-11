@@ -12,6 +12,12 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
+
+console.log(
+  "GOOGLE_CLIENT_ID:",
+  process.env.GOOGLE_CLIENT_ID ? "LOADED" : "MISSING"
+);
+
 app.use(
   cors({
     origin: process.env.CLIENT_URL,
