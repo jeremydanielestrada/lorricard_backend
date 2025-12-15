@@ -1,7 +1,9 @@
 import express from "express";
+import { upload } from "../middleware/FileUploaMiddleware.js";
 import {
   getAllFlashCardsByFolderId,
   createFlashCardsFromDocument,
+  createFlashCardsByFileUpload,
 } from "../controller/flashCardsController.js";
 import { protect } from "../middleware/authMiddleware.js";
 
@@ -17,6 +19,13 @@ flashCardRouter.post(
   "/create-flash-card/:folderId",
   protect,
   createFlashCardsFromDocument
+);
+
+flashCardRouter.post(
+  "/upload/:folderId",
+  protect,
+  upload.single("file"),
+  createFlashCardsByFileUpload
 );
 
 export default flashCardRouter;

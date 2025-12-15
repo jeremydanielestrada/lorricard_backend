@@ -4,7 +4,7 @@ import pool from "../config/db.js";
 export const getAllFoldersByOwner = async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, title, user_id, created_at 
+      `SELECT id, title, user_id, created_at  
        FROM folders 
        WHERE user_id= $1`,
       [req.user.id]
