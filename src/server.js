@@ -12,6 +12,7 @@ dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
 
 console.log(
   "GOOGLE_CLIENT_ID:",

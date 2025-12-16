@@ -25,6 +25,12 @@ export const createFlashCardsFromDocument = async (req, res) => {
   try {
     const { document } = req.body;
 
+    if (!document) {
+      return res.status(400).json({
+        message: "Paste some notes or documents on  the field",
+      });
+    }
+
     const parsedFlashcards = await parseDocumentWithGroq(document);
 
     const insertPromises = parsedFlashcards.map(({ question, answer }) => {

@@ -1,4 +1,3 @@
-import pdf from "pdf-parse";
 import mammoth from "mammoth";
 
 export const parseFile = async (file) => {
@@ -6,7 +5,8 @@ export const parseFile = async (file) => {
 
   try {
     if (fileExtension === "pdf") {
-      const data = await pdf(file.buffer);
+      const pdfParse = (await import("pdf-parse")).default;
+      const data = await pdfParse(file.buffer);
       return data.text;
     } else if (fileExtension === "docx" || fileExtension === "doc") {
       const result = await mammoth.extractRawText({ buffer: file.buffer });
