@@ -27,7 +27,7 @@ export const createFlashCardsFromDocument = async (req, res) => {
 
     if (!document) {
       return res.status(400).json({
-        message: "Paste some notes or documents on  the field",
+        message: "Paste some notes in the field",
       });
     }
 

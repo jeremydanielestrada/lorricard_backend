@@ -24,6 +24,33 @@ export const getAllFoldersByOwner = async (req, res) => {
   }
 };
 
+export const getOrCreateUntitledFolder = async (req, res) => {
+  try {
+    // Check if user already has an "Untitled" folder
+    let result = await pool.query(
+      "SELECT id, title, user_id FROM folders WHERE user_id = $1 AND title = $2",
+      [req.user.id, "Untitled"]
+    );
+
+    // If not found, create one
+    if (result.rows.length === 0) {
+      result = await pool.query(
+        "INSERT INTO folders (title, user_id) VALUES ($1, $2) RETURNING id, title, user_id",
+        ["Untitled", req.user.id]
+      );
+    }
+
+    res.status(200).json({
+      folder: result.rows[0],
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "Unable to get or create untitled folder",
+      error,
+    });
+  }
+};
+
 export const createFolder = async (req, res) => {
   try {
     const { title } = req.body;
