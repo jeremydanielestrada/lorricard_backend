@@ -1,6 +1,7 @@
 import pool from "../config/db.js";
 import parseDocumentWithGroq from "../utils/groq.js";
 import { parseFile } from "../utils/Pasrser.js";
+import validateDocumentContent from "../utils/promptValidator.js";
 
 //Show flashCards by folder_id
 export const getAllFlashCardsByFolderId = async (req, res) => {
@@ -31,7 +32,23 @@ export const createFlashCardsFromDocument = async (req, res) => {
       });
     }
 
+    // Validate document content
+    const validation = validateDocumentContent(document);
+    if (!validation.valid) {
+      return res.status(400).json({
+        message: validation.message,
+      });
+    }
+
     const parsedFlashcards = await parseDocumentWithGroq(document);
+
+    // Check if AI generated valid flashcards
+    if (!parsedFlashcards || parsedFlashcards.length === 0) {
+      return res.status(400).json({
+        message:
+          "Could not generate flashcards from this content. Please provide study notes or educational material.",
+      });
+    }
 
     const insertPromises = parsedFlashcards.map(({ question, answer }) => {
       return pool.query(
@@ -67,8 +84,24 @@ export const createFlashCardsByFileUpload = async (req, res) => {
       return res.status(400).json({ message: "File is empty or unreadable" });
     }
 
+    // Validate document content
+    const validation = validateDocumentContent(documentText);
+    if (!validation.valid) {
+      return res.status(400).json({
+        message: validation.message,
+      });
+    }
+
     // Use Groq AI to parse into flashcards
     const parsedFlashcards = await parseDocumentWithGroq(documentText);
+
+    // Check if AI generated valid flashcards
+    if (!parsedFlashcards || parsedFlashcards.length === 0) {
+      return res.status(400).json({
+        message:
+          "Could not generate flashcards from this file. Please provide study notes or educational material.",
+      });
+    }
 
     // Insert flashcards into database
     const insertPromises = parsedFlashcards.map(({ question, answer }) => {
