@@ -113,15 +113,19 @@ export const login = async (req, res) => {
 //logout
 export const logout = (req, res) => {
   try {
+    const isProduction = process.env.NODE_ENV === "production";
+
+    // Clear cookie with same options as when it was set
     res.cookie("token", "", {
       httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
       expires: new Date(0),
       path: "/",
     });
 
     res.json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    console.error("Logout error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
