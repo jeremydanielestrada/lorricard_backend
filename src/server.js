@@ -25,6 +25,12 @@ app.use(
     credentials: true,
   })
 );
+
+// Health check route
+app.get("/", (req, res) => {
+  res.json({ message: "Lorricards API is running" });
+});
+
 app.use("/api/auth", router);
 app.use("/api/folder", folderRouter);
 app.use("/api/flash-card", flashCardRouter);
