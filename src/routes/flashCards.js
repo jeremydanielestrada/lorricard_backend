@@ -1,5 +1,5 @@
 import express from "express";
-import { upload } from "../middleware/FileUploadMiddleware.js";
+import { upload } from "../middleware/fileUploadMiddleware.js";
 import {
   getAllFlashCardsByFolderId,
   createFlashCardsFromDocument,
