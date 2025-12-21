@@ -11,14 +11,6 @@ const validateDocumentContent = (document) => {
     };
   }
 
-  // Maximum character limit (optional)
-  if (cleanedDoc.length > 10000) {
-    return {
-      valid: false,
-      message: "Content is too long. Please limit to 10,000 characters",
-    };
-  }
-
   // Check if it's just random characters (no spaces or very few words)
   const words = cleanedDoc.split(/\s+/).filter((word) => word.length > 2);
   if (words.length < 10) {
