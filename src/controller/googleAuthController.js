@@ -11,6 +11,18 @@ const generateToken = (id, email) => {
   });
 };
 
+const setCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: "/",
+  };
+};
+
 export const continueToGoogleAuth = async (req, res) => {
   try {
     const { credential } = req.body;
@@ -60,7 +72,7 @@ export const continueToGoogleAuth = async (req, res) => {
     const token = generateToken(user.id, user.email); // MUST use user.id, NOT user.google_id
 
     console.log("Setting cookie and sending response...");
-    res.cookie("token", token, cookieOptions);
+    res.cookie("token", token, setCookieOptions());
     res.json({ jwt: token, user });
   } catch (error) {
     return res.status(400).json({

@@ -12,6 +12,18 @@ const generateToken = (id) => {
   });
 };
 
+const setCookieOptions = () => {
+  const isProduction = process.env.NODE_ENV === "production";
+
+  return {
+    httpOnly: true,
+    secure: isProduction, // true in production
+    sameSite: isProduction ? "none" : "lax", // "none" for cross-origin in production
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    path: "/",
+  };
+};
+
 //register
 export const register = async (req, res) => {
   try {
@@ -41,7 +53,7 @@ export const register = async (req, res) => {
 
     const token = generateToken(newUser.id);
 
-    res.cookie("token", token, cookieOptions);
+    res.cookie("token", token, setCookieOptions());
     res
       .status(201)
       .json({ message: "User registered successfully", user: newUser });
@@ -79,7 +91,7 @@ export const login = async (req, res) => {
 
     const token = generateToken(userData.id);
 
-    res.cookie("token", token, cookieOptions);
+    res.cookie("token", token, setCookieOptions());
 
     res.status(200).json({
       user: {
