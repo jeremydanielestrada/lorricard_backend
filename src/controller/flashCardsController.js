@@ -1,6 +1,6 @@
 import pool from "../config/db.js";
 import parseDocumentWithGroq from "../utils/groq.js";
-import { parseFile } from "../utils/Pasrser.js";
+import { parseFile } from "../utils/parser.js";
 import validateDocumentContent from "../utils/promptValidator.js";
 
 //Show flashCards by folder_id
