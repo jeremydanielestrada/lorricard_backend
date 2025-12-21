@@ -112,6 +112,16 @@ export const login = async (req, res) => {
 
 //logout
 export const logout = (req, res) => {
-  res.cookie("token", " ", { ...cookieOptions, maxAge: 1 });
-  res.json({ message: "Logged out succesfully" });
+  try {
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      path: "/",
+    });
+
+    res.json({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Logout error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
 };
