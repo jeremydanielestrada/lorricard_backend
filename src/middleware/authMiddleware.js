@@ -3,8 +3,12 @@ import pool from "../config/db.js";
 
 export const protect = async (req, res, next) => {
   try {
-    const token = req.cookies.token;
+    // Check Authorization header first, then cookie
+    let token = req.headers.authorization?.split(" ")[1];
 
+    if (!token) {
+      token = req.cookies.token;
+    }
     if (!token) {
       return res.status(400).json({ message: "Not authorized, no token" });
     }

@@ -66,14 +66,11 @@ export const continueToGoogleAuth = async (req, res) => {
       console.log("Existing user:", user);
     }
 
-    console.log("User object:", user); // ADD THIS - Check what's in user
-    console.log("Generating token with ID:", user.id); // ADD THIS
-
     const token = generateToken(user.id, user.email); // MUST use user.id, NOT user.google_id
 
     console.log("Setting cookie and sending response...");
     res.cookie("token", token, setCookieOptions());
-    res.json({ jwt: token, user });
+    res.json({ token, user });
   } catch (error) {
     return res.status(400).json({
       message: "Error authenticating to Google",

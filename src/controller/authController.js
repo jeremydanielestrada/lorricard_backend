@@ -56,7 +56,7 @@ export const register = async (req, res) => {
     res.cookie("token", token, setCookieOptions());
     res
       .status(201)
-      .json({ message: "User registered successfully", user: newUser });
+      .json({ message: "User registered successfully", user: newUser, token });
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -94,6 +94,7 @@ export const login = async (req, res) => {
     res.cookie("token", token, setCookieOptions());
 
     res.status(200).json({
+      token,
       user: {
         id: userData.id,
         first_name: userData.first_name,
